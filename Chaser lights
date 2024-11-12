@@ -1,5 +1,5 @@
 //This program will turn on and off 3 LEDs in sequence to make it look like a chaser light
-int timewait = 1000; set a integer for delay for easier editing
+int timewait = 1000; //set a integer for delay for easier editing
 
 void setup() { 
 
@@ -25,7 +25,7 @@ void loop() {
 
   delay(timewait);      //wait 1 sec                
 
-  digitalWrite(8,HIGH); turn led 2 on
+  digitalWrite(8,HIGH); //turn led 2 on
 
   delay(timewait);  //wait 1 sec
 
@@ -33,7 +33,7 @@ void loop() {
 
   delay(timewait); //wait 1 sec
 
-  digitalWrite(9,LOW); turn led 1 off
+  digitalWrite(9,LOW); //turn led 1 off
 
   delay(timewait); //wait 1 sec
 
@@ -41,8 +41,8 @@ void loop() {
 
   delay(timewait); // wait 1 sec
 
-  digitalWrite(7,LOW); turn led 3 off
+  digitalWrite(7,LOW); //turn led 3 off
 
-  delay(timewait); wait 1 sec then repeat
+  delay(timewait); //wait 1 sec then repeat
 
 } 
