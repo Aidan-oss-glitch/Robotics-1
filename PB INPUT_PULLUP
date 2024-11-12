@@ -1,0 +1,14 @@
+//this program will display 0 or 1 on serial monitor with Push Button and will create an internal resistance between the 5V and the input pin
+
+int PB = 2; //create variable for pin 2 to be PB
+
+void setup() {
+Serial.begin(9600); //starts communication between Arduino and PB
+pinMode(PB, INPUT_PULLUP);// sets PB pin as an input to read Value of PB 
+} 
+
+ void loop() { 
+ int PBval = !digitalRead(PB);// reads state of PB pin and stores it to integer PBval
+ Serial.print("PBval = ");//prints tesxt "PBval = " to serial monitor
+ Serial.print(PBval); //prints value of PB (0 or 1) to serial monitor
+}
