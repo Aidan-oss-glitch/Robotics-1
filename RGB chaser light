@@ -1,0 +1,30 @@
+//this program will turn on and off the three colors of a RGB LED in sequence to create a RGB Chaser light
+
+//create variables for each color of the RGB LED
+int red = 9;
+int blue = 8;
+int green = 7;
+
+void setup() {
+  //set red,blue and green pins to output
+  pinMode(red,OUTPUT);
+  pinMode(blue,OUTPUT);
+  pinMode(green,OUTPUT);
+
+} 
+
+ 
+void loop() { 
+digitalWrite(red,HIGH);//Turn red color on
+delay(1000);//wait 1 sec
+digitalWrite(red,LOW);//Turn red color off
+delay(1000);//wait 1 sec
+digitalWrite(blue,HIGH);//Turn blue color on
+delay(1000);//wait 1 sec
+digitalWrite(blue,(LOW);//Turn blue color off
+delay(1000);//wait 1 sec
+digitalWrite(green,HIGH);//Turn green color on
+delay(1000);//wait 1 sec
+digitalWrite(green,LOW);//Turn green color off
+delay(1000);//wait 1 sec
+}
