@@ -1,0 +1,26 @@
+//this program will make it so when the PB isnt pressed the RGB is white but when its pressed the RGB is off
+
+int PB = 2; //create variable for pin 2 to be PB
+
+//setting up pins to color of RGB
+int Red = 9;
+int Blue = 8;
+int Green = 7;
+
+void setup() {
+Serial.begin(9600);// starts communication between PB and arduino
+
+//set up pins 9,8,7 as OUTPUTS
+pinMode(Red,OUTPUT);
+pinMode(Blue,OUTPUT);
+pinMode(Green,OUTPUT);
+} 
+
+ void loop() { 
+int PBstate = !digitalRead(PB); //Will read the PB pin and read the inverse to get the right effect
+
+//will turn pins 9,8 and 7 on or off depending on the Value of the PB
+digitalWrite(Red,HIGH);// set Red pin to high as both cases the red led is on
+digitalWrite(Blue,PBstate);//set to normal PB state so when its pressed it turns on
+digitalWrite(Green,!PBstate);// set to inverse state so it stays on when button isnt pressed
+}
