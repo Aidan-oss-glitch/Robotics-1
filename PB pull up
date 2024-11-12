@@ -1,0 +1,14 @@
+//this program will display 0 or 1 on serial monitor with push button (PULL UP)
+
+int PB = 2; // create variable for pin 2 to be PB
+
+void setup() {
+Serial.begin(9600); //this will start communication between PB and arduino
+pinMode(PB,INPUT); //sets PB as input to receive data from the PB
+} 
+
+ void loop() { 
+int PBval = !digitalRead(PB); //reads the state of the PB pin and reads the inverted value
+Serial.print("PBval = "); //prints "PBval = " in the serial monitor next to the value
+Serial.println(PBval); //prints the value of the PB pin and prints it to the serial monitor(prints either 0 or 1)
+  }
