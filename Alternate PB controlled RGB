@@ -1,4 +1,4 @@
-//this program will make it so when the PB isnt pressed the RGB is white but when its pressed the RGB is off
+//this program will make it so when the PB isnt pressed red and green Colors are on but when preesed red and blue are on
 
 int PB = 2; //create variable for pin 2 to be PB
 
