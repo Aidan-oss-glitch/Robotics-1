@@ -1,0 +1,17 @@
+//This program with let you configure an RGB to a specific color
+
+void setup() {
+Serial.Begin(9600);//Begin communication(if you want to display serial monitor)
+
+//Set pins 9,8,7 as outputs
+pinMode(9,OUTPUT);
+pinMode(8,OUTPUT);
+pinMode(7,OUTPUT);
+}
+
+void loop() {
+//Set RGB value to create a color with the 3 existing colors
+analogWrite(9,255);
+analogWrite(8,55);
+analogWrite(7,100);
+}
