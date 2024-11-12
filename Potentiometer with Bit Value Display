@@ -1,3 +1,5 @@
+//this progran reads the potentiometer value and displays the raw bit value (0-1023) on the serial monitor
+
 void setup()
 {
   Serial.begin(9600);//starts communication between potentiometer and Arduino
