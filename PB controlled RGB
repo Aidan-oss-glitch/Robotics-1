@@ -1,0 +1,21 @@
+//this program will make it so when the PB isnt pressed the RGB is white but when its pressed the RGB is off
+
+int PB = 2; //create variable for pin 2 to be PB
+
+void setup() {
+Serial.begin(9600);// starts communication between PB and arduino
+
+//set up pins 9,8,7 as OUTPUTS
+pinMode(9,OUTPUT);
+pinMode(8,OUTPUT);
+pinMode(7,OUTPUT);
+} 
+
+ void loop() { 
+int PBstate = !digitalRead(PB); //Will read the PB pin and read the inverse to get the right effect
+
+//will turn pins 9,8 and 7 on or off depending on the Value of the PB
+digitalWrite(9,PBstate);
+digitalWrite(8,PBstate);
+digitalWrite(7,PBstate);
+}
