@@ -1,0 +1,36 @@
+//This program will make the servo turn between 180 degrees and 230 degrees depending on the level of light being detected by the LDR 
+
+#include <Servo.h> 
+
+  
+Servo myservo;  // create servo object to control a servo 
+
+  
+int potpin = A0;  // analog pin used to connect the LDR
+
+int val;    // variable to read the value from the analog pin 
+
+
+void setup() { 
+
+  myservo.attach(9);           //Assigns pin 9 to servo
+
+   Serial.begin(9600);         // attaches the servo on pin 9 to the servo object 
+
+} 
+
+  void loop() { 
+
+   
+
+  val = analogRead(potpin);            // reads the value of the LDR and stores it to int val
+
+  int angle = map(val, 31, 230, 0, 180);   //Creates linear eqation between the value of potpin and the degrees the servo will turn
+
+  Serial.println(val);                                    // will print value of Val to serial monitor
+
+  myservo.write(angle);                  // sets the servo position according to the scaled value 
+
+  delay(15);                           // waits for the servo to get there 
+
+} 
