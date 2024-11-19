@@ -1,0 +1,34 @@
+//This program will Control a stepper motor based on the position of the joystick 
+
+#include <Stepper.h>  
+
+const int stepsPerRevolution = 2048;  //Defines the number of steps per full revolution for the stepper motor 
+const int rolePerMinute = 15;         //Defines the speed of the stepper motor as 15 RPM 
+const int X_pin = 1;                  //Defines the pin connected to the X-axis of the joystick
+
+Stepper myStepper(stepsPerRevolution, 2, 4, 3, 5);  //Creates a object called myStepper to control the motor for steps per revolution and control pins 2, 3, 4, 5
+
+void setup() { 
+  myStepper.setSpeed(rolePerMinute);  //Sets the speed of the stepper motor to 15 RPM 
+  Serial.begin(9600);               //begins serial communication at a baud rate of 9600 
+}
+
+void loop() { 
+  int a = analogRead(X_pin);          //Reads the analog value from the X-axis of the joystick and stores it in the variable 'a'
+
+  if (a > 400 && a < 520) {           //Checks if the joystick value is in the "neutral" range 
+    for (int i = 2; i < 6; i++) {     //Loops through pins 2, 3, 4, and 5 to set them LOW 
+      digitalWrite(i, LOW);           //Turns off the motor by setting the control pins LOW
+    }
+  } 
+  
+  else if (a < 400) {                 //Checks if the joystick is pushed to the left 
+    myStepper.setSpeed(rolePerMinute);  //Sets the speed of the stepper motor to 15 RPM
+    myStepper.step(-30);              //Moves the stepper motor 30 steps backward 
+  }
+
+  else if (a > 530) {                 //Checks if the joystick is pushed to the right (value greater than 530)
+    myStepper.setSpeed(rolePerMinute);  //Sets the speed of the stepper motor to 15 RPM
+    myStepper.step(30);               //Moves the stepper motor 30 steps forward 
+  } 
+}
