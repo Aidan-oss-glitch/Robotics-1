@@ -1,0 +1,106 @@
+
+ /*
+  This program controls a robot using an IR remote control. 
+  The robot can move forward, reverse, turn left, turn right, or stop based on received IR signals.
+  The IR receiver is connected to pin 9, and various motor control pins are defined for controlling the robot's movements.
+  The robot uses the IR remote to decode specific signals and perform the corresponding actions.
+*/
+
+int left = 7;    // Left motor direction pin
+int right = 8;   // Right motor direction pin
+int speeda = 5;  // Left motor speed control
+int speedb = 6;  // Right motor speed control
+int stb = 3;     // Standby pin to enable motors
+int speed = 0;   // Motor speed (initialized to 0)
+
+#include <IRremote.h>    // Include the IRremote library to handle IR signals
+
+const int IR_RECEIVE_PIN = 9; // Define the pin connected to the IR receiver
+
+void setup() {    
+  Serial.begin(9600);    // Initialize serial communication at 9600 baud rate
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK); // Initialize the IR receiver with feedback LED enabled
+  Serial.println("IR Receiver Initialized. Waiting for input...");    // Print status message
+
+  // Initialize motor control pins as outputs
+  pinMode(left, OUTPUT);   
+  pinMode(right, OUTPUT);  
+  pinMode(stb, OUTPUT);   
+}
+
+void loop() {    
+  // Check if a signal is received
+  if (IrReceiver.decode()) {    
+    unsigned long receivedData = IrReceiver.decodedIRData.decodedRawData;    // Get the raw data from the received IR signal
+    Serial.print("Received HEX Value: 0x");    
+    Serial.println(receivedData, HEX); // Print the HEX value of the received signal
+
+    // Check if the received data matches specific command codes
+    if (receivedData == 0xB946FF00) {  
+      Forward(200);  // Move forward at speed 200
+    }
+
+    if (receivedData == 0xEA15FF00) {  
+      Reverse(200);  // Move in reverse at speed 200
+    }
+
+    if (receivedData == 0xBC43FF00) {  
+      Right(200);    // Turn right at speed 200
+    }
+
+    if (receivedData == 0xBB44FF00) {  
+      Left(200);     // Turn left at speed 200
+    }
+
+    if (receivedData == 0xBF40FF00) {  
+      Stop(0);       // Stop the motors
+    }
+
+    IrReceiver.resume(); // Prepare to receive the next IR signal
+  }
+}
+
+// Function to move the robot forward
+void Forward(int x) {    
+  digitalWrite(left, 1);    // Left motor forward
+  digitalWrite(right, 1);   // Right motor forward
+  analogWrite(speeda, x);   // Set left motor speed
+  analogWrite(speedb, x);   // Set right motor speed
+  digitalWrite(stb, 1);     // Enable motors by setting the standby pin to HIGH
+}
+
+// Function to move the robot in reverse
+void Reverse(int x) {    
+  digitalWrite(left, 0);    // Left motor backward (LOW sets direction)
+  digitalWrite(right, 1);   // Right motor forward
+  analogWrite(speeda, x);   // Set left motor speed
+  analogWrite(speedb, x);   // Set right motor speed
+  digitalWrite(stb, 1);     // Enable motors by setting the standby pin to HIGH
+}
+
+// Function to turn the robot right
+void Right(int x) {    
+  digitalWrite(left, 1);    // Left motor forward
+  digitalWrite(right, 0);   // Right motor backward (LOW sets direction)
+  analogWrite(speeda, x);   // Set left motor speed
+  analogWrite(speedb, x);   // Set right motor speed
+  digitalWrite(stb, 1);     // Enable motors by setting the standby pin to HIGH
+}
+
+// Function to turn the robot left
+void Left(int x) {    
+  digitalWrite(left, 1);    // Left motor forward
+  digitalWrite(right, 1);   // Right motor forward
+  analogWrite(speeda, x);   // Set left motor speed
+  analogWrite(speedb, x);   // Set right motor speed
+  digitalWrite(stb, 1);     // Enable motors by setting the standby pin to HIGH
+}
+
+// Function to stop the robot
+void Stop(int x) {  
+  digitalWrite(left, 1);    // Left motor forward (keeps motors running but stops motion)
+  digitalWrite(right, 1);   // Right motor forward
+  analogWrite(speeda, x);   // Set left motor speed to 0
+  analogWrite(speedb, x);   // Set right motor speed to 0
+  digitalWrite(stb, 1);     // Enable motors (though stopped due to speed=0)
+}
