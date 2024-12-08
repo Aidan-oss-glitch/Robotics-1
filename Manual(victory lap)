@@ -1,0 +1,86 @@
+/*
+  This program controls a robot that moves in a square pattern. 
+  It moves forward for 2 seconds, stops, turns right for 1 second, and repeats this process three times.
+  The motor controls use pins for the direction, speed, and standby mode.
+  The speed of the motors can be adjusted by changing the argument in the Forward and Right/Left functions.
+*/
+
+int Left1 = 7;    // Left motor direction pin 1 
+int Right1 = 8;    // Right motor direction pin 1 
+int speeda = 5;    // Left motor speed control 
+int speedb = 6;    // Right motor speed control 
+int stb = 3;       // Standby pin to enable motors 
+
+void setup() { 
+  // Initialize motor control pins as outputs
+  pinMode(Left1, OUTPUT);    // Set Left motor direction pin as OUTPUT
+  pinMode(Right1, OUTPUT);   // Set Right motor direction pin as OUTPUT
+  pinMode(stb, OUTPUT);      // Set Standby pin as OUTPUT to control motor enable
+  pinMode(speeda, OUTPUT);   // Set Left motor speed pin as OUTPUT
+  pinMode(speedb, OUTPUT);   // Set Right motor speed pin as OUTPUT
+} 
+
+void loop() { 
+  // Go around the table in a square pattern, repeat 3 times (for example)
+  for (int i = 0; i < 3; i++) { 
+    // Move forward 
+    Forward(200);  // Move forward at speed 200
+    delay(2000);   // Wait for 2 seconds (adjust this for the size of the table)
+
+    // Stop and turn right (90 degrees)
+    Stop();        // Stop the motors
+    delay(500);    // Wait for half a second
+
+    // Turn right
+    Right(200);    // Turn right at speed 200
+    delay(1000);   // Wait for 1 second (adjust based on turn speed)
+    Stop();        // Stop the motors
+    delay(500);    // Wait for half a second
+
+    // Repeat for the next turn
+  } 
+
+  // After completing the loop around the table, the car will stop and wait for the next loop.
+  Stop();        // Stop after completing the path
+  delay(2000);   // Wait for 2 seconds before starting the next loop
+} 
+
+// Function to stop the car
+void Stop() { 
+  // Stop the car by disabling motor power and setting the speed to 0
+  digitalWrite(Left1, LOW);    // Stop left motor by setting the direction pin to LOW
+  digitalWrite(Right1, LOW);   // Stop right motor by setting the direction pin to LOW
+  analogWrite(speeda, 0);      // Set left motor speed to 0 to stop
+  analogWrite(speedb, 0);      // Set right motor speed to 0 to stop
+  digitalWrite(stb, LOW);      // Disable motors by setting the standby pin to LOW
+} 
+
+// Function to move the car forward
+void Forward(int speed) { 
+  // Move forward by setting both motors forward and providing speed
+  digitalWrite(Left1, HIGH);   // Left motor forward (HIGH sets direction)
+  digitalWrite(Right1, HIGH);  // Right motor forward (HIGH sets direction)
+  analogWrite(speeda, speed);  // Set left motor speed
+  analogWrite(speedb, speed);  // Set right motor speed
+  digitalWrite(stb, HIGH);     // Enable motors by setting the standby pin to HIGH
+} 
+
+// Function to turn the car right
+void Right(int speed) { 
+  // Turn right by setting left motor forward and right motor backward
+  digitalWrite(Left1, HIGH);   // Left motor forward (HIGH sets direction)
+  digitalWrite(Right1, LOW);   // Right motor backward (LOW sets direction)
+  analogWrite(speeda, speed);  // Set left motor speed
+  analogWrite(speedb, speed);  // Set right motor speed
+  digitalWrite(stb, HIGH);     // Enable motors by setting the standby pin to HIGH
+} 
+
+// Function to turn the car left
+void Left(int speed) { 
+  // Turn left by setting left motor backward and right motor forward
+  digitalWrite(Left1, LOW);    // Left motor backward (LOW sets direction)
+  digitalWrite(Right1, HIGH);  // Right motor forward (HIGH sets direction)
+  analogWrite(speeda, speed);  // Set left motor speed
+  analogWrite(speedb, speed);  // Set right motor speed
+  digitalWrite(stb, HIGH);     // Enable motors by setting the standby pin to HIGH
+} 
