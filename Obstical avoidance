@@ -1,0 +1,174 @@
+/*
+  This program controls a robot using an ultrasonic sensor for obstacle detection and avoidance.
+  The robot uses a servo to rotate the sensor and check for obstacles on the left, right, and front.
+  Depending on the detected distance, the robot will either:
+  - Move forward if there is enough space
+  - Stop if an obstacle is detected close
+  - Turn left or right if there is space in those directions
+  - Perform a U-turn if both left and right are blocked
+*/
+
+#include <Servo.h> 
+
+// Pin definitions for the ultrasonic sensor
+#define TRIG_PIN 13     // Trig pin for ultrasonic sensor 
+#define ECHO_PIN 12     // Echo pin for ultrasonic sensor 
+
+// Pin definitions for the motor controls
+#define MOTOR_LEFT1 5   // Left motor control pin 1 (Analog for speed control) 
+#define MOTOR_LEFT2 6   // Left motor control pin 2 (Analog for speed control) 
+#define MOTOR_RIGHT1 7  // Right motor control pin 1 (Digital) 
+#define MOTOR_RIGHT2 8  // Right motor control pin 2 (Digital) 
+
+// Pin definition for the servo
+#define SERVO_PIN 10    // Servo control pin 
+
+// Pin definition for enabling/disabling the motors (STBY_PIN)
+#define STBY_PIN 3      // Standby pin for motor driver (Enable motors, Digital) 
+
+// Create a Servo object to control the ultrasonic sensor's orientation
+Servo myServo;         
+
+// Declare variables to store distance and sensor values
+long duration; 
+int distance; 
+int angle = 90;  // Start with sensor facing forward
+
+void setup() { 
+  // Set motor control pins as output
+  pinMode(MOTOR_LEFT1, OUTPUT);   // Motor left speed control (Analog pin) 
+  pinMode(MOTOR_LEFT2, OUTPUT);   // Motor left speed control (Analog pin) 
+  pinMode(MOTOR_RIGHT1, OUTPUT);  // Motor right control (Digital pin) 
+  pinMode(MOTOR_RIGHT2, OUTPUT);  // Motor right control (Digital pin) 
+  pinMode(STBY_PIN, OUTPUT);      // Standby pin (to enable/disable motors)
+
+  // Set ultrasonic sensor pins
+  pinMode(TRIG_PIN, OUTPUT); 
+  pinMode(ECHO_PIN, INPUT); 
+  
+  // Attach the servo to the servo pin and set the initial position to 90 degrees (forward)
+  myServo.attach(SERVO_PIN); 
+  myServo.write(angle); 
+
+  // Start serial communication for debugging
+  Serial.begin(9600); 
+
+  // Enable the motors
+  digitalWrite(STBY_PIN, HIGH); 
+} 
+
+void loop() { 
+  // Get distance from the ultrasonic sensor
+  distance = getDistance(); 
+
+  Serial.print("Distance = "); 
+
+  if (distance == -1) { 
+    // Error reading sensor
+    Serial.println("Error reading sensor"); 
+  } else { 
+    // Print the distance in cm
+    Serial.print(distance); 
+    Serial.println(" cm"); 
+  } 
+
+  // If there is no obstacle within 25 cm, move forward
+  if (distance >= 25) { 
+    forward(); 
+  } else { 
+    // If there is an obstacle within 25 cm, stop and find a way around
+    stopCar(); 
+    delay(500);  // Wait for half a second 
+
+    // Move the servo to the left and check the distance
+    myServo.write(180);  
+    delay(50); 
+    distance = getDistance(); 
+
+    if (distance >= 25) { 
+      // If the left side is clear, turn left
+      myServo.write(90);  // Reset sensor to center 
+      turnLeft(); 
+      delay(500);  // Wait for the turn to complete
+      forward(); 
+    } else { 
+      // If the left side is blocked, move the servo to the right
+      myServo.write(0);  
+      delay(500); 
+      distance = getDistance(); 
+
+      if (distance >= 25) { 
+        // If the right side is clear, turn right
+        myServo.write(90);  // Reset sensor to center 
+        turnRight(); 
+        delay(500);  // Wait for the turn to complete
+        forward(); 
+      } else { 
+        // If both sides are blocked, perform a U-turn
+        stopCar(); 
+        delay(500);  // Wait for half a second 
+        backward(); 
+        delay(1000);  // Move backward for 1 second 
+        myServo.write(90);  // Reset sensor 
+        uTurn();            // Perform U-turn
+        forward();          // Continue moving forward
+      } 
+    } 
+  } 
+
+  // Add a small delay to prevent frequent sensor readings
+  delay(1000);  
+} 
+
+// Function to get the distance from the ultrasonic sensor
+long getDistance() { 
+  // Send a pulse to trigger the ultrasonic sensor
+  digitalWrite(TRIG_PIN, LOW); 
+  delayMicroseconds(2); 
+  digitalWrite(TRIG_PIN, HIGH);  // Send trigger pulse
+  delayMicroseconds(10); 
+  digitalWrite(TRIG_PIN, LOW); 
+
+  // Read the pulse duration from the Echo pin
+  duration = pulseIn(ECHO_PIN, HIGH); 
+
+  // Calculate the distance in cm
+  int distance = (duration / 2) / 29.1;  
+  return distance; 
+}
+
+// Function to move the car forward
+void forward() { 
+  digitalWrite(3, HIGH);  // Enable motors 
+  digitalWrite(8, HIGH);  // Right motor forward
+  analogWrite(5, 50);     // Left motor forward (speed control) 
+  digitalWrite(7, HIGH);  // Right motor forward
+  analogWrite(6, 50);     // Left motor forward (speed control)
+} 
+
+// Function to stop the car
+void stopCar() { 
+  digitalWrite(3, LOW);  // Disable motors 
+  digitalWrite(8, LOW);  // Stop right motor 
+  analogWrite(5, 0);     // Stop left motor (speed control)
+  digitalWrite(7, LOW);  // Stop right motor 
+  analogWrite(6, 0);     // Stop left motor (speed control)
+}
+
+// Function to move the car backward
+void backward() { 
+  digitalWrite(3, HIGH);  // Enable motors 
+  digitalWrite(8, LOW);   // Right motor backward
+  analogWrite(5, 50);     // Left motor backward (speed control) 
+  digitalWrite(7, LOW);   // Right motor backward 
+  analogWrite(6, 50);     // Left motor backward (speed control)
+} 
+
+// Function to turn the car left
+void turnLeft() { 
+  digitalWrite(3, HIGH);  // Enable motors 
+  digitalWrite(8, LOW);   // Right motor backward
+  analogWrite(5, 112);    // Left motor forward (speed control)
+  digitalWrite(7, HIGH);  // Right motor forward
+  analogWrite(6, 112);    // Left motor forward (speed control)
+} 
